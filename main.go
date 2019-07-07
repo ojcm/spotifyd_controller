@@ -13,22 +13,20 @@ var skipURL = "https://api.spotify.com/v1/me/player/next"
 var skipPrevURL = "https://api.spotify.com/v1/me/player/previous"
 var client = &http.Client{}
 
-func addHeaders(req *http.Request) {
+func sendRequest(type string, url string) {
+	req, _ := http.NewRequest(type, url, nil)
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer "+token)
+	client.Do(req)
 }
 
 func putRequest(url string) {
-	req, _ := http.NewRequest("PUT", url, nil)
-	addHeaders(req)
-	client.Do(req)
+	sendRequest("PUT", url)
 }
 
 func postRequest(url string) {
-	req, _ := http.NewRequest("POST", url, nil)
-	addHeaders(req)
-	client.Do(req)
+	sendRequest("POST", url)
 }
 
 // StartPlayback resumes playback of current track
