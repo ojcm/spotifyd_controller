@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 )
@@ -11,10 +12,11 @@ var startURL = "https://api.spotify.com/v1/me/player/play"
 var stopURL = "https://api.spotify.com/v1/me/player/pause"
 var skipURL = "https://api.spotify.com/v1/me/player/next"
 var skipPrevURL = "https://api.spotify.com/v1/me/player/previous"
+var volumeURL = "https://api.spotify.com/v1/me/player/volume?volume_percent="
 var client = &http.Client{}
 
-func sendRequest(type string, url string) {
-	req, _ := http.NewRequest(type, url, nil)
+func sendRequest(req_type string, url string) {
+	req, _ := http.NewRequest(req_type, url, nil)
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -49,6 +51,11 @@ func SkipPrevPlayback() {
 	postRequest(skipPrevURL)
 }
 
+// SetVolume sets the volume to the given percentage.
+func SetVolume(volumePercent string) {
+	putRequest(fmt.Sprintf("%s%s", volumeURL, volumePercent))
+}
+
 func main() {
 	switch action := os.Args[1]; action {
 	case "stop":
@@ -59,5 +66,7 @@ func main() {
 		SkipPlayback()
 	case "prev":
 		SkipPrevPlayback()
+	case "vol":
+		SetVolume(os.Args[2])
 	}
 }
